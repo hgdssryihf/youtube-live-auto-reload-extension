@@ -4,14 +4,16 @@
 
 配信者側の開始が予定時刻より遅れる場合でも、配信が実際に始まったタイミングでリロードされるため、見逃しを防げます。
 
+**ストアからインストール**: [Firefox版](https://addons.mozilla.org/ja/firefox/addon/youtube-live-自動リロード監視/) | [Edge版](https://microsoftedge.microsoft.com/addons/detail/youtube-live-自動リロード監視/nbaphmmlaohmmkhjfnddokhjclcapmpa)
+
 ## 対応ブラウザ
 
 このリポジトリには、ブラウザごとに2つのバージョンが含まれています。
 
-| フォルダ | 対応ブラウザ | 説明 |
-|---|---|---|
-| [`chrome-edge/`](./chrome-edge) | Google Chrome, Microsoft Edge | Manifest V3 (`chrome.*` API) |
-| [`firefox/`](./firefox) | Mozilla Firefox | Manifest V3 (`browser.*` / WebExtensions API) |
+| フォルダ | 対応ブラウザ | ストアページ | 説明 |
+|---|---|---|---|
+| [`chrome-edge/`](./chrome-edge) | Google Chrome, Microsoft Edge | [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/youtube-live-自動リロード監視/nbaphmmlaohmmkhjfnddokhjclcapmpa) | Manifest V3 (`chrome.*` API) |
+| [`firefox/`](./firefox) | Mozilla Firefox | [Firefox Add-ons (AMO)](https://addons.mozilla.org/ja/firefox/addon/youtube-live-自動リロード監視/) | Manifest V3 (`browser.*` / WebExtensions API) |
 
 それぞれのフォルダ内のREADMEに、インストール方法・使い方・注意点を記載しています。
 
@@ -24,16 +26,24 @@
 - 同じタブに対する監視予定は、新規追加ではなく上書き
 - 「このタブを監視する」を押すとポップアップが自動的に閉じる
 
-## インストール方法(開発版・一時利用)
+## インストール方法
 
-### Chrome / Edge
+### ストアから(推奨)
+
+- **Firefox**: [Firefox Add-ons (AMO) のページ](https://addons.mozilla.org/ja/firefox/addon/youtube-live-自動リロード監視/)から「Firefoxへ追加」をクリック
+- **Edge**: [Microsoft Edge Add-ons のページ](https://microsoftedge.microsoft.com/addons/detail/youtube-live-自動リロード監視/nbaphmmlaohmmkhjfnddokhjclcapmpa)から「入手」をクリック
+- **Chrome**: Chromeウェブストアには現在未公開です。下記の「開発版・一時利用」の手順でインストールしてください
+
+### 開発版・一時利用(コードを直接読み込む場合)
+
+#### Chrome / Edge
 
 1. `chrome-edge/` フォルダをダウンロードします
 2. `chrome://extensions/`(Edgeの場合は `edge://extensions/`)を開きます
 3. 「デベロッパーモード」(Edgeは「開発者モード」)をONにします
 4. 「パッケージ化されていない拡張機能を読み込む」(Edgeは「展開して読み込み」)をクリックし、`chrome-edge/` フォルダを選択します
 
-### Firefox
+#### Firefox
 
 1. `firefox/` フォルダをダウンロードします
 2. `about:debugging#/runtime/this-firefox` を開きます
