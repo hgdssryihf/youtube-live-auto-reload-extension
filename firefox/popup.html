@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>YouTube LIVE 自動リロード監視</title>
+<style>
+  body {
+    width: 340px;
+    font-family: "Segoe UI", "Meiryo", sans-serif;
+    padding: 12px;
+    color: #222;
+  }
+  h1 {
+    font-size: 15px;
+    margin: 0 0 4px;
+  }
+  .desc {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .current-tab {
+    font-size: 12px;
+    color: #555;
+    background: #f4f4f4;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 4px;
+    margin-top: 8px;
+  }
+  input[type="datetime-local"], input[type="number"], select {
+    width: 100%;
+    padding: 6px;
+    font-size: 13px;
+    box-sizing: border-box;
+  }
+  .row2 {
+    display: flex;
+    gap: 8px;
+  }
+  .row2 > div {
+    flex: 1;
+  }
+  .field-group {
+    margin-bottom: 8px;
+  }
+  button#addBtn {
+    width: 100%;
+    padding: 8px;
+    background: #0078d4;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 14px;
+  }
+  button#addBtn:hover {
+    background: #005a9e;
+  }
+  h2 {
+    font-size: 13px;
+    margin: 16px 0 6px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+  }
+  .schedule-item {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .schedule-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+  .schedule-info {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 230px;
+  }
+  .schedule-sub {
+    color: #888;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #d40000;
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .empty {
+    font-size: 12px;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+  <h1>YouTube LIVE 自動リロード監視</h1>
+  <div class="desc">指定した日時になったらタブを前面表示し、対象タブの配信開始を定期的に確認します。まだ始まっていなければ前面表示&リロードを繰り返し、再生が始まったら自動的に監視を停止します。Firefoxはchrome系ブラウザのような30秒未満の間隔制限がないため、数秒単位での確認も可能です。</div>
+
+  <div class="current-tab" id="currentTab">読み込み中...</div>
+
+  <label for="datetimeInput">前面表示&監視を開始する日時</label>
+  <div class="row2" style="margin-bottom: 12px;">
+    <div>
+      <input type="datetime-local" id="datetimeInput">
+    </div>
+    <div style="flex: 0 0 60px;">
+      <button id="datetimeConfirmBtn" type="button" style="width:100%; height:100%; padding:6px 0; background:#eee; border:1px solid #ccc; border-radius:6px; font-size:12px; cursor:pointer;">決定</button>
+    </div>
+  </div>
+
+  <label>確認間隔</label>
+  <div class="row2" style="margin-bottom: 8px;">
+    <div>
+      <input type="number" id="intervalInput" min="1" value="60">
+    </div>
+    <div style="flex: 0 0 70px;">
+      <select id="intervalUnit">
+        <option value="sec">秒</option>
+        <option value="min">分</option>
+      </select>
+    </div>
+  </div>
+
+  <label>監視を続ける時間</label>
+  <div class="row2">
+    <div>
+      <input type="number" id="durationInput" min="1" value="30">
+    </div>
+    <div style="flex: 0 0 70px;">
+      <select id="durationUnit">
+        <option value="min">分</option>
+        <option value="sec">秒</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="addBtn">このタブを監視する</button>
+
+  <h2>監視中のスケジュール</h2>
+  <div id="scheduleList"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
