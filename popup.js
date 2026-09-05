@@ -135,6 +135,17 @@ function formatInterval(minutes) {
   return `${minutes}分`;
 }
 
+// 同じタブに対する既存の監視予定があれば、すべて削除する(上書きのため)
+async function clearExistingSchedulesForTab(tabId) {
+  const entries = await getAllSchedules();
+  for (const [name, info] of entries) {
+    if (info && info.tabId === tabId) {
+      await chrome.alarms.clear(name);
+      await chrome.storage.local.remove(name);
+    }
+  }
+}
+
 document.getElementById("addBtn").addEventListener("click", async () => {
   const value = document.getElementById("datetimeInput").value;
 
@@ -168,6 +179,9 @@ document.getElementById("addBtn").addEventListener("click", async () => {
     if (!proceed) return;
   }
 
+  // 同じタブに既存の監視予定があれば削除してから新しく登録する(上書き)
+  await clearExistingSchedulesForTab(currentTab.id);
+
   const maxChecks = Math.max(1, Math.ceil(durationMinutes / intervalMinutes));
   const alarmName = `${STORAGE_PREFIX}${currentTab.id}_${Date.now()}`;
 
@@ -191,7 +205,7 @@ document.getElementById("addBtn").addEventListener("click", async () => {
   chrome.action.setBadgeText({ text: "...", tabId: currentTab.id });
   chrome.action.setBadgeBackgroundColor({ color: "#888888" });
 
-  renderScheduleList();
+  window.close();
 });
 
 init();

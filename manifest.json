@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube LIVE 自動リロード監視",
-  "version": "1.3",
+  "version": "1.5",
   "description": "指定した日時になったらタブを前面表示し、その後は一定間隔でYouTube LIVEの配信開始を確認しながら、まだ始まっていなければ自動でリロードします。実際に再生が始まったら自動的に監視を停止します。",
   "permissions": ["alarms", "storage", "tabs", "scripting"],
   "host_permissions": ["https://*.youtube.com/*"],

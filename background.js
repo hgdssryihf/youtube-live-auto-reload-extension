@@ -56,8 +56,6 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
 
-  const isFirstCheck = !info.checksDone;
-
   // 指定した時刻になったら、まずタブを前面表示する
   try {
     await bringToFront(tab);
@@ -65,7 +63,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     console.warn("タブの前面表示に失敗しました", e);
   }
 
-  // タブ内で再生状態を確認する
+  // タブ内で再生状態を確認する(前面表示直後、リロード前の状態を見る)
   let isPlaying = false;
   try {
     const results = await chrome.scripting.executeScript({
@@ -78,7 +76,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   }
 
   if (isPlaying) {
-    // 配信が始まっている -> 監視終了
+    // 配信が始まっている -> 監視終了(リロード不要)
     chrome.action.setBadgeText({ text: "LIVE", tabId: tab.id }).catch(() => {});
     chrome.action.setBadgeBackgroundColor({ color: "#0a8a3c" }).catch(() => {});
     await stopMonitoring(alarm.name);
@@ -95,12 +93,9 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
 
-  // まだ配信が始まっていない場合はリロードする(最初のチェックは前面表示のみで、
-  // リロードは元々ページを開いていた状態を活かすため2回目以降から行う)
+  // まだ配信が始まっていない場合は、前面表示した瞬間(1回目も含む)に必ずリロードする
   try {
-    if (!isFirstCheck) {
-      await chrome.tabs.reload(tab.id);
-    }
+    await chrome.tabs.reload(tab.id);
     chrome.action.setBadgeText({
       text: String(info.maxChecks - info.checksDone),
       tabId: tab.id,
