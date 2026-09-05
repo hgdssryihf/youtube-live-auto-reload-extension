@@ -1,6 +1,10 @@
-# YouTube LIVE 自動リロード監視
+# YouTube LIVE 自動リロード監視(Chrome / Edge版)
 
 指定した時間帯、対象のYouTube LIVEタブが**実際に再生を開始しているか**を定期的に確認し、まだ始まっていなければ自動でタブを前面表示&リロードする拡張機能です。配信側の開始が予定時刻より遅れる場合にも対応できます。
+
+**配布ページ**: [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/youtube-live-自動リロード監視/nbaphmmlaohmmkhjfnddokhjclcapmpa)
+
+Firefoxをお使いの方は [Firefox版(Firefox Add-ons)](https://addons.mozilla.org/ja/firefox/addon/youtube-live-自動リロード監視/) をご利用ください。
 
 ## この拡張機能で解決する問題
 
