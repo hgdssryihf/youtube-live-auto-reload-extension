@@ -4,7 +4,7 @@
 
 配信者側の開始が予定時刻より遅れる場合でも、配信が実際に始まったタイミングでリロードされるため、見逃しを防げます。
 
-**ストアからインストール**:[Edge版]([https://microsoftedge.microsoft.com/addons/detail/%E5%B8%B8%E3%81%AB%E5%90%8D%E5%89%8D%E3%82%92%E4%BB%98%E3%81%91%E3%81%A6%E4%BF%9D%E5%AD%98/gpcbepkjdiomhiblenecabebcefkacnd])
+**ストアからインストール**: [Firefox版](https://addons.mozilla.org/ja/firefox/addon/youtube-live-自動リロード監視/) | [Edge版](https://microsoftedge.microsoft.com/addons/detail/youtube-live-自動リロード監視/nbaphmmlaohmmkhjfnddokhjclcapmpa)
 
 ## 対応ブラウザ
 
