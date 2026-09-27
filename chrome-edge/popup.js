@@ -36,6 +36,8 @@ async function init() {
   });
   document.getElementById("datetimeConfirmBtn").addEventListener("click", () => {
     datetimeInputEl.blur();
+    // カレンダーを閉じるのと同時に、「このタブを監視する」も実行する
+    document.getElementById("addBtn").click();
   });
 
   // 確認間隔・監視時間を変更したら、その都度記憶しておく
