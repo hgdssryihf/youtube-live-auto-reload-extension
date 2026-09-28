@@ -9,7 +9,9 @@ async function init() {
   const el = document.getElementById("currentTab");
   el.textContent = `対象タブ: ${tab.title || tab.url}`;
 
+  // 初期値は日付・時はそのまま、「分」だけ00に固定する
   const defaultTime = new Date(Date.now() + 60 * 1000);
+  defaultTime.setMinutes(0, 0, 0);
   document.getElementById("datetimeInput").value = toLocalInputValue(defaultTime);
 
   // 前回入力した確認間隔・監視時間を復元する
