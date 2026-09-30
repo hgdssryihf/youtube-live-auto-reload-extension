@@ -11,9 +11,9 @@ async function init() {
   const el = document.getElementById("currentTab");
   el.textContent = `対象タブ: ${tab.title || tab.url}`;
 
-  // 初期値は日付・時はそのまま、「分」だけ00に固定する
-  const defaultTime = new Date(Date.now() + 60 * 1000);
-  defaultTime.setMinutes(0, 0, 0);
+  // 初期値は「次の時間の00分」(例: 14:35に開けば15:00)
+  const defaultTime = new Date();
+  defaultTime.setHours(defaultTime.getHours() + 1, 0, 0, 0);
   document.getElementById("datetimeInput").value = toLocalInputValue(defaultTime);
 
   // 前回入力した確認間隔・監視時間を復元する
@@ -213,6 +213,114 @@ document.getElementById("addBtn").addEventListener("click", async () => {
   api.action.setBadgeBackgroundColor({ color: "#888888" });
 
   window.close();
+});
+
+// YouTubeのページ内に埋め込まれたデータから、配信/プレミア公開の予定開始時刻(エポックミリ秒)を取り出す。
+// この関数はページのコンテキストで実行されるため、外部のスコープを参照しない自己完結した内容にする。
+function extractScheduledStartTimeMs() {
+  // 1. ytInitialPlayerResponse内の「配信開始待ち」情報から取得(最も確実)
+  try {
+    const per = window.ytInitialPlayerResponse;
+    const renderer =
+      per &&
+      per.playabilityStatus &&
+      per.playabilityStatus.liveStreamability &&
+      per.playabilityStatus.liveStreamability.liveStreamabilityRenderer;
+    const scheduled =
+      renderer &&
+      renderer.offlineSlate &&
+      renderer.offlineSlate.liveStreamOfflineSlateRenderer &&
+      renderer.offlineSlate.liveStreamOfflineSlateRenderer.scheduledStartTime;
+    if (scheduled) {
+      const sec = parseInt(scheduled, 10);
+      if (!isNaN(sec)) return sec * 1000;
+    }
+  } catch (e) {
+    // 無視して次の方法を試す
+  }
+
+  // 2. ページ内のscriptタグ全体から "scheduledStartTime":"数字" のパターンを探す(構造変化への保険)
+  try {
+    const scripts = document.querySelectorAll("script");
+    for (const s of scripts) {
+      const text = s.textContent;
+      if (!text || text.indexOf("scheduledStartTime") === -1) continue;
+      const m = text.match(/"scheduledStartTime":"(\d+)"/);
+      if (m) {
+        const sec = parseInt(m[1], 10);
+        if (!isNaN(sec)) return sec * 1000;
+      }
+    }
+  } catch (e) {
+    // 無視して次の方法を試す
+  }
+
+  // 3. schema.orgのld+jsonデータ(publication.startDate)から取得
+  try {
+    const ldScripts = document.querySelectorAll('script[type="application/ld+json"]');
+    for (const s of ldScripts) {
+      try {
+        const data = JSON.parse(s.textContent);
+        const pub = data && data.publication;
+        const startDate = pub && pub.startDate;
+        if (startDate) {
+          const t = new Date(startDate).getTime();
+          if (!isNaN(t)) return t;
+        }
+      } catch (e) {
+        // このscriptタグはJSONとして解析できなかった。次へ
+      }
+    }
+  } catch (e) {
+    // 無視
+  }
+
+  return null;
+}
+
+document.getElementById("autoFillBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("autoFillBtn");
+  const originalText = btn.textContent;
+
+  if (!currentTab || !currentTab.url || !/^https?:\/\/([a-z0-9-]+\.)*youtube\.com\//i.test(currentTab.url)) {
+    alert("YouTubeの動画ページ(ライブ配信/プレミア公開の視聴ページ)を開いた状態で実行してください。");
+    return;
+  }
+
+  btn.textContent = "取得中...";
+  btn.disabled = true;
+
+  try {
+    const results = await api.scripting.executeScript({
+      target: { tabId: currentTab.id },
+      func: extractScheduledStartTimeMs,
+    });
+    const scheduledMs = results && results[0] && results[0].result;
+
+    if (!scheduledMs) {
+      alert(
+        "配信予定時刻を検出できませんでした。ページが「配信開始をお待ちください」の状態になっているか確認するか、日時を手動で入力してください。"
+      );
+      return;
+    }
+
+    // 配信予定時刻をそのまま初期値にする(すでに過ぎていれば数秒後にする)
+    let target = scheduledMs;
+    if (target < Date.now()) {
+      target = Date.now() + 5000;
+    }
+
+    document.getElementById("datetimeInput").value = toLocalInputValue(new Date(target));
+
+    // 日時の自動入力と同時に、そのまま監視を開始する
+    document.getElementById("addBtn").click();
+  } catch (e) {
+    console.warn("配信予定時刻の取得に失敗しました", e);
+    alert("取得中にエラーが発生しました。ページを再読み込みしてから、もう一度お試しください。");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 });
 
 init();
